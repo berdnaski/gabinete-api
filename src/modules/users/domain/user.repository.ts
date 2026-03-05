@@ -1,8 +1,13 @@
+import { Role } from '@prisma/client';
 import { User } from './user.entity';
 
-export const USER_REPOSITORY = 'USER_REPOSITORY';
-
-export interface IUserRepository {
-    findByEmail(email: string): Promise<User | null>;
-    create(data: { name: string; email: string; password: string }): Promise<User>;
+export abstract class UserRepository {
+    abstract findByEmail(email: string): Promise<User | null>;
+    abstract create(data: {
+        name: string;
+        email: string;
+        password: string;
+        role?: Role;
+        cabinetId: string;
+    }): Promise<User>;
 }
