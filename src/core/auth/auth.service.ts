@@ -9,19 +9,35 @@ import { LoginDto } from './dto/login.dto';
 import { User } from 'src/modules/users/domain/user.entity';
 import { CreateUserUseCase } from 'src/modules/users/application/create-user.usecase';
 
+import { RegisterCabinetUseCase } from 'src/modules/cabinets/application/register-cabinet.usecase';
+import { RegisterCabinetDto } from 'src/modules/cabinets/dto/register-cabinet.dto';
+
+import { UserResponseDto } from 'src/modules/users/dto/user-response.dto';
+
 @Injectable()
 export class AuthService {
     constructor(
         private readonly findUserByEmail: FindUserByEmailUseCase,
         private readonly createUser: CreateUserUseCase,
+        private readonly registerCabinetUseCase: RegisterCabinetUseCase,
         private readonly passwordHasher: PasswordHasher,
         private readonly jwtService: JwtService,
     ) { }
 
-    async register(dto: RegisterDto): Promise<User> {
+    async registerCabinet(dto: RegisterCabinetDto) {
+        return this.registerCabinetUseCase.execute(dto);
+    }
+
+    async register(dto: RegisterDto): Promise<UserResponseDto> {
         const existing = await this.findUserByEmail.execute(dto.email);
         if (existing) throw new EmailAlreadyRegisteredException();
-        return this.createUser.execute(dto);
+        const user = await this.createUser.execute({
+            name: dto.name,
+            email: dto.email,
+            password: dto.password,
+            cabinetId: dto.cabinetId,
+        });
+        return UserResponseDto.fromEntity(user);
     }
 
     async login(dto: LoginDto): Promise<{ access_token: string }> {

@@ -4,10 +4,19 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 
+import { RegisterCabinetDto } from 'src/modules/cabinets/dto/register-cabinet.dto';
+
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
     constructor(private readonly authService: AuthService) { }
+
+    @Post('register-cabinet')
+    @ApiOperation({ summary: 'Registrar um novo gabinete e o administrador' })
+    @ApiResponse({ status: 201, description: 'Gabinete e administrador criados com sucesso.' })
+    async registerCabinet(@Body() dto: RegisterCabinetDto) {
+        return this.authService.registerCabinet(dto);
+    }
 
     @Post('register')
     @ApiOperation({ summary: 'Registrar um novo usuário' })
