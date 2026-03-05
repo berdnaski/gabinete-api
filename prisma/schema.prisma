@@ -6,11 +6,36 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id       String @id @default(uuid())
+enum Role {
+  ADMIN
+  CABINET
+  USER
+}
+
+model Cabinet {
+  id       String  @id @default(uuid())
   name     String
-  email    String @unique
+  slug     String  @unique
+  isActive Boolean @default(true)
+
+  users User[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("cabinets")
+}
+
+model User {
+  id       String  @id @default(uuid())
+  name     String
+  email    String  @unique
   password String
+  role     Role    @default(USER)
+  isActive Boolean @default(true)
+
+  cabinet   Cabinet @relation(fields: [cabinetId], references: [id], onDelete: Cascade)
+  cabinetId String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
