@@ -6,6 +6,7 @@ import { AuthModule } from './core/auth/auth.module';
 
 import { CabinetsModule } from './modules/cabinets/cabinets.module';
 import { UsersModule } from './modules/users/users.module';
+import { CategoriesModule } from './modules/categories/categories.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { UsersModule } from './modules/users/users.module';
     CabinetsModule,
     AuthModule,
     UsersModule,
+    CategoriesModule,
   ],
 })
 export class AppModule { }
