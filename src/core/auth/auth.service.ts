@@ -47,7 +47,7 @@ export class AuthService {
         const valid = await this.passwordHasher.compare(dto.password, user.password);
         if (!valid) throw new InvalidCredentialsException();
 
-        const payload = { sub: user.id, email: user.email };
+        const payload = { sub: user.id, email: user.email, cabinetId: user.cabinetId };
         const access_token = await this.jwtService.signAsync(payload);
         return { access_token };
     }
