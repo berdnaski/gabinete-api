@@ -41,7 +41,10 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  demands   Demand[]
+
+  demands         Demand[]        @relation("ReporterDemands")
+  assignedDemands Demand[]        @relation("AssigneeDemands")
+  comments        DemandComment[]
 
   @@map("users")
 }
@@ -88,11 +91,47 @@ model Demand {
   category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId String
 
+  reporter   User   @relation("ReporterDemands", fields: [reporterId], references: [id])
   reporterId String
-  reporter   User   @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+
+  assignee   User?   @relation("AssigneeDemands", fields: [assigneeId], references: [id])
+  assigneeId String?
+
+  evidences DemandEvidence[]
+  comments  DemandComment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("demands")
+}
+
+model DemandEvidence {
+  id       String @id @default(uuid())
+  url      String
+  key      String
+  mimeType String
+
+  demand   Demand @relation(fields: [demandId], references: [id], onDelete: Cascade)
+  demandId String
+
+  createdAt DateTime @default(now())
+
+  @@map("demand_evidences")
+}
+
+model DemandComment {
+  id      String @id @default(uuid())
+  content String @db.Text
+
+  demand   Demand @relation(fields: [demandId], references: [id], onDelete: Cascade)
+  demandId String
+
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("demand_comments")
 }
