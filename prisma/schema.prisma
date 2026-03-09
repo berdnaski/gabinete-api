@@ -169,6 +169,7 @@ model Result {
   date        DateTime   @default(now())
   type        ResultType @default(INFRASTRUCTURE)
   isActive    Boolean    @default(true)
+  isPublic    Boolean    @default(false)
 
   cabinet   Cabinet @relation(fields: [cabinetId], references: [id], onDelete: Cascade)
   cabinetId String

@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/core/database/prisma.service";
 import { BaseTenantRepository } from "src/core/database/base-tenant.repository";
-import { ResultRepository } from "../domain/result.repository";
+import { ResultRepository, ResultFilters } from "../domain/result.repository";
 import { Result } from "../domain/result.entity";
 import { PaginationParamsDto } from "src/shared/pagination/pagination-params.dto";
 import { PaginatedResultDto } from "src/shared/pagination/paginated-result.dto";
@@ -26,14 +26,62 @@ export class ResultRepositoryImpl extends BaseTenantRepository<Result> implement
         });
     }
 
-    async list(cabinetId: string, params: PaginationParamsDto, filters?: Partial<Result>): Promise<PaginatedResultDto<Result>> {
+    async list(cabinetId: string, params: PaginationParamsDto, filters?: ResultFilters): Promise<PaginatedResultDto<Result>> {
+        const { isPublic, ...restFilters } = filters || {};
+        const extraWhere: any = { ...restFilters };
+
+        if (isPublic !== undefined) {
+            extraWhere.isPublic = isPublic;
+        }
+
         return this.findManyPaginated(
             this.prisma.result,
             cabinetId,
             params,
-            filters,
+            extraWhere,
             { images: { where: { isActive: true } } }
         );
+    }
+
+    async listPublic(params: PaginationParamsDto, cabinetId?: string): Promise<PaginatedResultDto<Result>> {
+        const { skip, limit } = params;
+        const where: any = {
+            isActive: true,
+            isPublic: true,
+        };
+
+        if (cabinetId) {
+            where.cabinetId = cabinetId;
+        }
+
+        const [items, total] = await Promise.all([
+            this.prisma.result.findMany({
+                where,
+                skip,
+                take: limit,
+                include: { images: { where: { isActive: true } } },
+                orderBy: { createdAt: 'desc' },
+            }),
+            this.prisma.result.count({ where }),
+        ]);
+
+        return new PaginatedResultDto<Result>(
+            items as unknown as Result[],
+            total,
+            params.page ?? 1,
+            params.limit ?? 10
+        );
+    }
+
+    async findByIdPublic(id: string): Promise<Result | null> {
+        return this.prisma.result.findFirst({
+            where: {
+                id,
+                isActive: true,
+                isPublic: true,
+            },
+            include: { images: { where: { isActive: true } } }
+        }) as unknown as Result;
     }
 
     async update(id: string, cabinetId: string, data: Partial<Result>): Promise<Result> {

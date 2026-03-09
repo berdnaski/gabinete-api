@@ -15,6 +15,7 @@ export class Result {
     date: Date;
     type: ResultType;
     isActive: boolean;
+    isPublic: boolean;
     cabinetId: string;
     demandId?: string | null;
     images?: ResultImage[];

@@ -7,6 +7,7 @@ export interface ResultFilters {
     type?: ResultType;
     demandId?: string;
     isActive?: boolean;
+    isPublic?: boolean;
     title?: string;
 }
 
@@ -14,6 +15,8 @@ export abstract class ResultRepository {
     abstract create(data: Partial<Result>): Promise<Result>;
     abstract findById(id: string, cabinetId: string): Promise<Result | null>;
     abstract list(cabinetId: string, params: PaginationParamsDto, filters?: ResultFilters): Promise<PaginatedResultDto<Result>>;
+    abstract listPublic(params: PaginationParamsDto, cabinetId?: string): Promise<PaginatedResultDto<Result>>;
+    abstract findByIdPublic(id: string): Promise<Result | null>;
     abstract update(id: string, cabinetId: string, data: Partial<Result>): Promise<Result>;
     abstract delete(id: string, cabinetId: string): Promise<void>;
     abstract addImage(resultId: string, url: string, key: string, type: ImageType): Promise<void>;

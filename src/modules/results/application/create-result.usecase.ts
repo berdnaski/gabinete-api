@@ -18,6 +18,7 @@ export class CreateResultUseCase {
             description: dto.description,
             type: dto.type,
             demandId: dto.demandId,
+            isPublic: dto.isPublic,
             cabinetId,
         });
     }

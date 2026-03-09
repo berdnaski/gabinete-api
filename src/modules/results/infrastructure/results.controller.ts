@@ -1,11 +1,12 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CreateResultUseCase } from '../application/create-result.usecase';
 import { AddResultImagesUseCase } from '../application/add-result-images.usecase';
 import { CreateResultDto } from '../dto/create-result.dto';
 import { RolesGuard } from 'src/shared/guards/roles.guard';
 import { Roles } from 'src/shared/decorators/roles.decorator';
+import { Public } from 'src/shared/decorators/public.decorator';
 import { Role, ResultType } from '@prisma/client';
 import { CurrentTenantId } from 'src/shared/decorators/current-tenant.decorator';
 import { JwtAuthGuard } from 'src/core/auth/jwt/jwt.guard';
@@ -16,8 +17,11 @@ import { UpdateResultDto } from '../dto/update-result.dto';
 import { UpdateResultUsecase } from '../application/update-result.usecase';
 import { DeleteResultUseCase } from '../application/delete-result.usecase';
 import { DeleteResultImageUseCase } from '../application/delete-result-image.usecase';
+import { ListPublicResultsUseCase } from '../application/list-public-results.usecase';
+import { FindPublicResultByIdUseCase } from '../application/find-public-result-by-id.usecase';
 
 @ApiTags('results')
+@ApiBearerAuth()
 @Controller('results')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ResultsController {
@@ -29,6 +33,8 @@ export class ResultsController {
     private readonly updateResultUseCase: UpdateResultUsecase,
     private readonly deleteResultUseCase: DeleteResultUseCase,
     private readonly deleteResultImageUseCase: DeleteResultImageUseCase,
+    private readonly listPublicResultsUseCase: ListPublicResultsUseCase,
+    private readonly findPublicResultByIdUseCase: FindPublicResultByIdUseCase,
   ) { }
 
   @Post()
@@ -72,8 +78,26 @@ export class ResultsController {
     return this.addImagesUseCase.execute(id, cabinetId, files);
   }
 
+  @Get('public')
+  @Public()
+  @ApiOperation({ summary: 'List results for any cabinet (or all if not specified)' })
+  async findPublic(
+    @Query() params: PaginationParamsDto,
+    @Query('cabinetId') cabinetId?: string,
+  ) {
+    return this.listPublicResultsUseCase.execute(params, cabinetId);
+  }
+
+  @Get('public/:id')
+  @Public()
+  @ApiOperation({ summary: 'Find a specific public result by ID' })
+  async findPublicById(@Param('id') id: string) {
+    return this.findPublicResultByIdUseCase.execute(id);
+  }
+
   @Get()
-  @ApiOperation({ summary: 'Listar todos os resultados' })
+  @Roles(Role.CABINET, Role.ADMIN)
+  @ApiOperation({ summary: 'Listar todos os resultados (Painel Admin)' })
   async findAll(
     @CurrentTenantId() cabinetId: string,
     @Query() params: PaginationParamsDto,
@@ -82,6 +106,7 @@ export class ResultsController {
   }
 
   @Get(':id')
+  @Roles(Role.CABINET, Role.ADMIN)
   @ApiOperation({ summary: 'Buscar resultado por ID' })
   async findById(
     @CurrentTenantId() cabinetId: string,

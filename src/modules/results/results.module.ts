@@ -10,6 +10,8 @@ import { CloudflareUpload } from 'src/shared/infrastructure/services/cloudflare-
 import { UpdateResultUsecase } from './application/update-result.usecase';
 import { DeleteResultUseCase } from './application/delete-result.usecase';
 import { DeleteResultImageUseCase } from './application/delete-result-image.usecase';
+import { ListPublicResultsUseCase } from './application/list-public-results.usecase';
+import { FindPublicResultByIdUseCase } from './application/find-public-result-by-id.usecase';
 
 @Module({
   controllers: [ResultsController],
@@ -23,6 +25,8 @@ import { DeleteResultImageUseCase } from './application/delete-result-image.usec
     UpdateResultUsecase,
     DeleteResultUseCase,
     DeleteResultImageUseCase,
+    ListPublicResultsUseCase,
+    FindPublicResultByIdUseCase,
   ],
   exports: [
     ResultRepository,
@@ -33,6 +37,8 @@ import { DeleteResultImageUseCase } from './application/delete-result-image.usec
     UpdateResultUsecase,
     DeleteResultUseCase,
     DeleteResultImageUseCase,
+    ListPublicResultsUseCase,
+    FindPublicResultByIdUseCase,
   ],
 })
 export class ResultsModule { }

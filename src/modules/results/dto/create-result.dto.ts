@@ -22,4 +22,8 @@ export class CreateResultDto {
     @IsUUID()
     @IsOptional()
     demandId?: string;
+
+    @ApiPropertyOptional({ example: false })
+    @IsOptional()
+    isPublic?: boolean;
 }
