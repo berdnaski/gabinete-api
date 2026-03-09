@@ -24,6 +24,7 @@ model Cabinet {
   updatedAt  DateTime   @updatedAt
   categories Category[]
   demands    Demand[]
+  results    Result[]
 
   @@map("cabinets")
 }
@@ -102,6 +103,7 @@ model Demand {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  result    Result?
 
   @@map("demands")
 }
@@ -134,4 +136,50 @@ model DemandComment {
   updatedAt DateTime @updatedAt
 
   @@map("demand_comments")
+}
+
+enum ResultType {
+  INFRASTRUCTURE
+  SOCIAL
+  LEGISLATIVE
+  OTHER
+}
+
+enum ImageType {
+  BEFORE
+  AFTER
+  GENERAL
+}
+
+model ResultImage {
+  id       String    @id @default(uuid())
+  url      String
+  key      String
+  type     ImageType @default(GENERAL)
+  isActive Boolean   @default(true)
+
+  resultId String
+  result   Result @relation(fields: [resultId], references: [id], onDelete: Cascade)
+}
+
+model Result {
+  id          String     @id @default(uuid())
+  title       String
+  description String     @db.Text
+  date        DateTime   @default(now())
+  type        ResultType @default(INFRASTRUCTURE)
+  isActive    Boolean    @default(true)
+
+  cabinet   Cabinet @relation(fields: [cabinetId], references: [id], onDelete: Cascade)
+  cabinetId String
+
+  demandId String? @unique
+  demand   Demand? @relation(fields: [demandId], references: [id])
+
+  images ResultImage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("results")
 }
