@@ -40,7 +40,14 @@ export class AuthService {
         return UserResponseDto.fromEntity(user);
     }
 
-    async login(dto: LoginDto): Promise<{ access_token: string }> {
+    async login(dto: LoginDto): Promise<{
+        id: string,
+        name: string,
+        email: string,
+        role: string,
+        cabinetId: string,
+        access_token: string
+    }> {
         const user = await this.findUserByEmail.execute(dto.email);
         if (!user) throw new InvalidCredentialsException();
 
@@ -54,6 +61,14 @@ export class AuthService {
             cabinetId: user.cabinetId
         };
         const access_token = await this.jwtService.signAsync(payload);
-        return { access_token };
+
+        return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            cabinetId: user.cabinetId,
+            access_token
+        };
     }
 }
