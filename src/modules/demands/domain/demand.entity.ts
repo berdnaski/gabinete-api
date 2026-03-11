@@ -1,4 +1,4 @@
-import { DemandStatus } from "@prisma/client";
+import { DemandStatus, DemandPriority } from "@prisma/client";
 
 export class DemandEvidence {
     id: string;
@@ -14,6 +14,7 @@ export class Demand {
     title: string;
     description: string;
     status: DemandStatus;
+    priority: DemandPriority;
     latitude?: number;
     longitude?: number;
     address?: string;

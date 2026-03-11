@@ -1,5 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
+import { DemandPriority } from '@prisma/client';
 
 export class CreateDemandDto {
     @ApiProperty({ example: 'Buraco na rua' })
@@ -17,12 +19,19 @@ export class CreateDemandDto {
     @IsNotEmpty()
     categoryId: string;
 
+    @ApiPropertyOptional({ enum: DemandPriority, default: DemandPriority.LOW })
+    @IsEnum(DemandPriority)
+    @IsOptional()
+    priority?: DemandPriority;
+
     @ApiPropertyOptional({ example: -23.55052 })
+    @Type(() => Number)
     @IsNumber()
     @IsOptional()
     latitude?: number;
 
     @ApiPropertyOptional({ example: -46.633308 })
+    @Type(() => Number)
     @IsNumber()
     @IsOptional()
     longitude?: number;

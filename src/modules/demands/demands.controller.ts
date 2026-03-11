@@ -34,6 +34,7 @@ import { DeleteDemandEvidenceUseCase } from './application/delete-demand-evidenc
 import { AddDemandEvidenceUseCase } from './application/add-demand-evidence.usecase';
 import { CreateDemandDto } from './dto/create-demand.dto';
 import { UpdateDemandDto } from './dto/update-demand.dto';
+import { ListDemandsDto } from './dto/list-demands.dto';
 import { AssignDemandDto, CreateDemandCommentDto, UpdateDemandStatusDto } from './dto/update-demand-specialized.dto';
 
 @ApiTags('demands')
@@ -91,7 +92,7 @@ export class DemandsController {
     @ApiOperation({ summary: 'Listar demandas do gabinete' })
     async findAll(
         @CurrentTenantId() cabinetId: string,
-        @Query() params: PaginationParamsDto,
+        @Query() params: ListDemandsDto,
     ) {
         return this.listDemands.execute(cabinetId, params);
     }

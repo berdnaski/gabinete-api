@@ -14,7 +14,6 @@ export abstract class BaseTenantRepository<T> {
         const where = {
             ...extraWhere,
             cabinetId,
-            isActive: true,
         };
 
         const [items, total] = await Promise.all([
@@ -47,7 +46,6 @@ export abstract class BaseTenantRepository<T> {
             where: {
                 id,
                 cabinetId,
-                isActive: true,
             },
             include,
         });

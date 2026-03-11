@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
+import { DemandPriority } from '@prisma/client';
 
 export class UpdateDemandDto {
     @ApiPropertyOptional({ example: 'Buraco na rua (Atualizado)' })
@@ -16,6 +17,11 @@ export class UpdateDemandDto {
     @IsUUID()
     @IsOptional()
     categoryId?: string;
+
+    @ApiPropertyOptional({ enum: DemandPriority })
+    @IsEnum(DemandPriority)
+    @IsOptional()
+    priority?: DemandPriority;
 
     @ApiPropertyOptional({ example: -23.55052 })
     @IsNumber()

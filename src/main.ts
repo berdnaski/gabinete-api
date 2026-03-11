@@ -12,7 +12,10 @@ async function bootstrap() {
     credentials: true,
   });
 
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,
+    transform: true,
+  }));
 
   const config = new DocumentBuilder()
     .setTitle('Gabinete API')
