@@ -22,7 +22,6 @@ model Cabinet {
 
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
-  categories Category[]
   demands    Demand[]
   results    Result[]
 
@@ -70,9 +69,6 @@ model Category {
   id       String  @id @default(uuid())
   name     String
   isActive Boolean @default(true)
-
-  cabinet   Cabinet @relation(fields: [cabinetId], references: [id], onDelete: Cascade)
-  cabinetId String
 
   demands Demand[]
 

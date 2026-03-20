@@ -67,12 +67,12 @@ async function main() {
 
   for (const cat of CATEGORIES) {
     const exists = await prisma.category.findFirst({
-      where: { name: cat.name, cabinetId: cabinet.id },
+      where: { name: cat.name },
     });
 
     if (!exists) {
       await prisma.category.create({
-        data: { name: cat.name, cabinetId: cabinet.id, isActive: true },
+        data: { name: cat.name, isActive: true },
       });
       criadas++;
     } else {
