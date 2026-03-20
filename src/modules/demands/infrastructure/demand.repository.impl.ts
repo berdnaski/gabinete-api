@@ -35,7 +35,8 @@ export class DemandRepositoryImpl extends BaseTenantRepository<Demand> implement
             comments: {
                 include: { author: true },
                 orderBy: { createdAt: 'desc' }
-            }
+            },
+            _count: { select: { supports: true } },
         }) as any;
     }
 
@@ -43,6 +44,7 @@ export class DemandRepositoryImpl extends BaseTenantRepository<Demand> implement
         return this.findManyPaginated(this.prisma.demand, cabinetId, params, filters, {
             category: true,
             reporter: true,
+            _count: { select: { supports: true } },
         }) as any;
     }
 
@@ -56,25 +58,16 @@ export class DemandRepositoryImpl extends BaseTenantRepository<Demand> implement
 
     async addEvidence(demandId: string, url: string, key: string, mimeType: string): Promise<void> {
         await this.prisma.demandEvidence.create({
-            data: {
-                url,
-                key,
-                mimeType,
-                demandId,
-            }
+            data: { url, key, mimeType, demandId }
         });
     }
 
     async findEvidenceById(id: string): Promise<any> {
-        return this.prisma.demandEvidence.findUnique({
-            where: { id }
-        });
+        return this.prisma.demandEvidence.findUnique({ where: { id } });
     }
 
     async deleteEvidence(id: string): Promise<void> {
-        await this.prisma.demandEvidence.delete({
-            where: { id }
-        });
+        await this.prisma.demandEvidence.delete({ where: { id } });
     }
 
     async updateStatus(id: string, cabinetId: string, status: any): Promise<Demand> {
@@ -85,42 +78,52 @@ export class DemandRepositoryImpl extends BaseTenantRepository<Demand> implement
         return this.updateByTenant(this.prisma.demand, id, cabinetId, { assigneeId }) as any;
     }
 
-    async addComment(demandId: string, authorId: string, content: string): Promise<any> {
+    async addComment(demandId: string, authorId: string, content: string, isOfficialResponse = false): Promise<any> {
         return this.prisma.demandComment.create({
-            data: {
-                content,
-                demandId,
-                authorId,
-            },
+            data: { content, demandId, authorId, isOfficialResponse },
             include: {
-                author: {
-                    select: { id: true, name: true }
-                }
+                author: { select: { id: true, name: true } }
             }
         });
     }
 
     async findCommentById(id: string): Promise<any> {
-        return this.prisma.demandComment.findUnique({
-            where: { id }
-        });
+        return this.prisma.demandComment.findUnique({ where: { id } });
     }
 
     async updateComment(id: string, content: string): Promise<any> {
         return this.prisma.demandComment.update({
             where: { id },
             data: { content },
-            include: {
-                author: {
-                    select: { id: true, name: true }
-                }
-            }
+            include: { author: { select: { id: true, name: true } } }
         });
     }
 
     async deleteComment(id: string): Promise<void> {
-        await this.prisma.demandComment.delete({
-            where: { id }
+        await this.prisma.demandComment.delete({ where: { id } });
+    }
+
+    // ---- Demand Support ----
+
+    async addSupport(demandId: string, userId: string): Promise<void> {
+        await this.prisma.demandSupport.create({
+            data: { demandId, userId }
         });
+    }
+
+    async removeSupport(demandId: string, userId: string): Promise<void> {
+        await this.prisma.demandSupport.deleteMany({
+            where: { demandId, userId }
+        });
+    }
+
+    async findSupport(demandId: string, userId: string): Promise<any | null> {
+        return this.prisma.demandSupport.findUnique({
+            where: { demandId_userId: { demandId, userId } }
+        });
+    }
+
+    async countSupports(demandId: string): Promise<number> {
+        return this.prisma.demandSupport.count({ where: { demandId } });
     }
 }

@@ -46,6 +46,7 @@ model User {
   demands         Demand[]        @relation("ReporterDemands")
   assignedDemands Demand[]        @relation("AssigneeDemands")
   comments        DemandComment[]
+  supports        DemandSupport[]
 
   @@map("users")
 }
@@ -106,8 +107,11 @@ model Demand {
   assignee   User?   @relation("AssigneeDemands", fields: [assigneeId], references: [id])
   assigneeId String?
 
+  supportGoal Int?             // meta de apoiadores
+
   evidences DemandEvidence[]
   comments  DemandComment[]
+  supports  DemandSupport[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -131,8 +135,9 @@ model DemandEvidence {
 }
 
 model DemandComment {
-  id      String @id @default(uuid())
-  content String @db.Text
+  id                 String  @id @default(uuid())
+  content            String  @db.Text
+  isOfficialResponse Boolean @default(false)
 
   demand   Demand @relation(fields: [demandId], references: [id], onDelete: Cascade)
   demandId String
@@ -144,6 +149,21 @@ model DemandComment {
   updatedAt DateTime @updatedAt
 
   @@map("demand_comments")
+}
+
+model DemandSupport {
+  id       String @id @default(uuid())
+
+  demand   Demand @relation(fields: [demandId], references: [id], onDelete: Cascade)
+  demandId String
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  createdAt DateTime @default(now())
+
+  @@unique([demandId, userId])
+  @@map("demand_supports")
 }
 
 enum ResultType {

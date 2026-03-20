@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 import { DemandStatus } from '@prisma/client';
 
 export class UpdateDemandStatusDto {
@@ -21,4 +21,9 @@ export class CreateDemandCommentDto {
     @IsString()
     @IsNotEmpty()
     content: string;
+
+    @ApiProperty({ example: false, required: false, description: 'Marcar como resposta oficial do gabinete' })
+    @IsBoolean()
+    @IsOptional()
+    isOfficialResponse?: boolean;
 }

@@ -32,6 +32,8 @@ import { UpdateDemandCommentUseCase } from './application/update-demand-comment.
 import { DeleteDemandCommentUseCase } from './application/delete-demand-comment.usecase';
 import { DeleteDemandEvidenceUseCase } from './application/delete-demand-evidence.usecase';
 import { AddDemandEvidenceUseCase } from './application/add-demand-evidence.usecase';
+import { ToggleDemandSupportUseCase } from './application/toggle-demand-support.usecase';
+import { GetDemandSupportStatusUseCase } from './application/get-demand-support-status.usecase';
 import { CreateDemandDto } from './dto/create-demand.dto';
 import { UpdateDemandDto } from './dto/update-demand.dto';
 import { ListDemandsDto } from './dto/list-demands.dto';
@@ -55,6 +57,8 @@ export class DemandsController {
         private readonly deleteCommentUseCase: DeleteDemandCommentUseCase,
         private readonly deleteEvidenceUseCase: DeleteDemandEvidenceUseCase,
         private readonly addEvidenceUseCase: AddDemandEvidenceUseCase,
+        private readonly toggleSupportUseCase: ToggleDemandSupportUseCase,
+        private readonly getSupportStatusUseCase: GetDemandSupportStatusUseCase,
     ) { }
 
     @Post()
@@ -147,7 +151,27 @@ export class DemandsController {
         @Param('id') demandId: string,
         @Body() dto: CreateDemandCommentDto,
     ) {
-        return this.createComment.execute(demandId, cabinetId, user.userId, dto);
+        return this.createComment.execute(demandId, cabinetId, user.userId, user.role, dto);
+    }
+
+    @Post(':id/support')
+    @ApiOperation({ summary: 'Apoiar ou remover apoio de uma demanda (toggle)' })
+    async toggleSupport(
+        @CurrentTenantId() cabinetId: string,
+        @CurrentUser() user: AuthUserPayload,
+        @Param('id') demandId: string,
+    ) {
+        return this.toggleSupportUseCase.execute(demandId, cabinetId, user.userId);
+    }
+
+    @Get(':id/support')
+    @ApiOperation({ summary: 'Verificar status de apoio do usuário atual na demanda' })
+    async getSupportStatus(
+        @CurrentTenantId() cabinetId: string,
+        @CurrentUser() user: AuthUserPayload,
+        @Param('id') demandId: string,
+    ) {
+        return this.getSupportStatusUseCase.execute(demandId, cabinetId, user.userId);
     }
 
     @Patch('comments/:commentId')

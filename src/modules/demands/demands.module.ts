@@ -16,6 +16,8 @@ import { DemandRepository } from './domain/demand.repository';
 import { DemandRepositoryImpl } from './infrastructure/demand.repository.impl';
 import { CategoriesModule } from '../categories/categories.module';
 import { CloudflareUpload } from 'src/shared/infrastructure/services/cloudflare-upload.service';
+import { ToggleDemandSupportUseCase } from './application/toggle-demand-support.usecase';
+import { GetDemandSupportStatusUseCase } from './application/get-demand-support-status.usecase';
 
 @Module({
     imports: [CategoriesModule],
@@ -35,6 +37,8 @@ import { CloudflareUpload } from 'src/shared/infrastructure/services/cloudflare-
         DeleteDemandCommentUseCase,
         DeleteDemandEvidenceUseCase,
         AddDemandEvidenceUseCase,
+        ToggleDemandSupportUseCase,
+        GetDemandSupportStatusUseCase,
     ],
     exports: [
         DemandRepository,
@@ -51,6 +55,8 @@ import { CloudflareUpload } from 'src/shared/infrastructure/services/cloudflare-
         DeleteDemandCommentUseCase,
         DeleteDemandEvidenceUseCase,
         AddDemandEvidenceUseCase,
+        ToggleDemandSupportUseCase,
+        GetDemandSupportStatusUseCase,
     ],
 })
 export class DemandsModule { }

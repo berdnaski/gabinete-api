@@ -11,10 +11,15 @@ export abstract class DemandRepository {
     abstract addEvidence(demandId: string, url: string, key: string, mimeType: string): Promise<void>;
     abstract updateStatus(id: string, cabinetId: string, status: string): Promise<Demand>;
     abstract assign(id: string, cabinetId: string, assigneeId: string | null): Promise<Demand>;
-    abstract addComment(demandId: string, authorId: string, content: string): Promise<any>;
+    abstract addComment(demandId: string, authorId: string, content: string, isOfficialResponse?: boolean): Promise<any>;
     abstract findCommentById(id: string): Promise<any>;
     abstract updateComment(id: string, content: string): Promise<any>;
     abstract deleteComment(id: string): Promise<void>;
     abstract deleteEvidence(id: string): Promise<void>;
     abstract findEvidenceById(id: string): Promise<any>;
+    // Support
+    abstract addSupport(demandId: string, userId: string): Promise<void>;
+    abstract removeSupport(demandId: string, userId: string): Promise<void>;
+    abstract findSupport(demandId: string, userId: string): Promise<any | null>;
+    abstract countSupports(demandId: string): Promise<number>;
 }
