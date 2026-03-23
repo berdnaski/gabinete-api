@@ -19,7 +19,7 @@ export class CreateDemandUseCase {
         dto: CreateDemandDto,
         files?: Express.Multer.File[]
     ): Promise<Demand> {
-        const category = await this.categoryRepository.findById(dto.categoryId, cabinetId);
+        const category = await this.categoryRepository.findById(dto.categoryId);
         if (!category) {
             throw new NotFoundException('Category not found');
         }

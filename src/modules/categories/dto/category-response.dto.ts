@@ -12,9 +12,6 @@ export class CategoryResponseDto {
     isActive: boolean;
 
     @ApiProperty()
-    cabinetId: string;
-
-    @ApiProperty()
     createdAt: Date;
 
     @ApiProperty()
@@ -25,7 +22,6 @@ export class CategoryResponseDto {
             id: entity.id,
             name: entity.name,
             isActive: entity.isActive,
-            cabinetId: entity.cabinetId,
             createdAt: entity.createdAt,
             updatedAt: entity.updatedAt,
         };

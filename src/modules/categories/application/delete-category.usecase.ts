@@ -5,12 +5,12 @@ import { CategoryRepository } from "../domain/category.repository";
 export class DeleteCategoryUseCase {
     constructor(private readonly categoryRepository: CategoryRepository) { }
 
-    async execute(id: string, cabinetId: string): Promise<void> {
-        const category = await this.categoryRepository.findById(id, cabinetId);
+    async execute(id: string): Promise<void> {
+        const category = await this.categoryRepository.findById(id);
         if (!category) {
             throw new NotFoundException('Category not found');
         }
 
-        await this.categoryRepository.delete(id, cabinetId);
+        await this.categoryRepository.delete(id);
     }
 }

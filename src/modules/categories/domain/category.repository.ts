@@ -3,10 +3,10 @@ import { Category } from "./category.entity";
 import { PaginatedResultDto } from "src/shared/pagination/paginated-result.dto";
 
 export abstract class CategoryRepository {
-    abstract create(data: Category): Promise<Category>;
-    abstract findByName(name: string, cabinetId: string): Promise<Category | null>;
-    abstract list(cabinetId: string, params: PaginationParamsDto): Promise<PaginatedResultDto<Category>>;
-    abstract findById(id: string, cabinetId: string): Promise<Category | null>;
-    abstract update(id: string, cabinetId: string, data: Partial<Category>): Promise<Category>;
-    abstract delete(id: string, cabinetId: string): Promise<Category>;
+    abstract create(data: Omit<Category, 'id' | 'createdAt' | 'updatedAt' | 'isActive'>): Promise<Category>;
+    abstract findByName(name: string): Promise<Category | null>;
+    abstract list(params: PaginationParamsDto): Promise<PaginatedResultDto<Category>>;
+    abstract findById(id: string): Promise<Category | null>;
+    abstract update(id: string, data: Partial<Category>): Promise<Category>;
+    abstract delete(id: string): Promise<Category>;
 }
